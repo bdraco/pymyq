@@ -83,6 +83,7 @@ class API:  # pylint: disable=too-many-instance-attributes
                     async with self._websession.request(
                         method, url, headers=headers, params=params, json=json, **kwargs
                     ) as resp:
+                        _LOGGER.warning("url: %s, data: %s", url, await resp.text())
                         data = await resp.json(content_type=None)
                         resp.raise_for_status()
                         return data
@@ -142,6 +143,8 @@ class API:  # pylint: disable=too-many-instance-attributes
         devices_resp = await self.request(
             "get", "Accounts/{0}/Devices".format(self.account_id), api_version=DEVICES_API_VERSION
         )
+
+        _LOGGER.debug("DEVICES: %s", devices_resp)
 
         if devices_resp is None or devices_resp.get("items") is None:
             _LOGGER.debug("Response did not contain any devices, no updates.")
